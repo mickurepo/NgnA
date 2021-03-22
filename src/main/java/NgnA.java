@@ -22,38 +22,62 @@ public class NgnA {
         }
     }
 
+    private static char[] specialChars = new char[]{'+', '-', '/', '*', '.'};
+    private static String emblemat = "--- | ";
+
     public static void main(String[] args) {
+        System.out.println(emblemat+"Welcome.");
+        System.out.println(emblemat+"Program dedicated to NGN IT Solutions GmbH.");
+        System.out.println(emblemat+"Made by Michal Kurzyk.");
+        System.out.println(emblemat+"2021");
+        System.out.println(emblemat+"");
+        System.out.println(emblemat+"Decimal separator is used as '.' sign or ',' ");
+        System.out.println(emblemat+"You can add, subtract, multiply and divide");
+        System.out.println(emblemat+"Brackets are not allowd");
+        System.out.println(emblemat);
+
         Scanner scan = new Scanner(System.in);
         while (true) {
-            System.out.println("[Type 'e' to exit]");
-            System.out.println("Write the operation to do:");
+            System.out.println(emblemat+"[Type 'e' to exit]");
+            System.out.println(emblemat+"Write the operation to do:");
+            System.out.print(emblemat);
             String operationStr = scan.nextLine();
-            if (operationStr.startsWith("e"))
+
+            if (operationStr.equals("e")) {
+                System.out.println(emblemat+"Michal Kurzyk.");
+                System.out.println(emblemat+"2021");
+                System.out.println(emblemat+"Closing program. See you.");
                 System.exit(0);
+            }
             operationStr = prepareOperationString(operationStr);
+            if (checkCorrectnessOfLine(operationStr) == false) {
+                System.out.println(emblemat+"Incorrect input");
+                continue;
+            }
+
             List<Pair> pairList = organizeOperationString(operationStr);
 //            operationSeries(pairList, '^');
             operationSeries(pairList, '/');
             operationSeries(pairList, '*');
             operationSeries(pairList, '-');
             operationSeries(pairList, '+');
+
+            char lastSign = pairList.get(0).getSign();
+
             if (pairList.size() > 0)
-                System.out.println("The result is:" + pairList.get(0).getSign() + pairList.get(0).getValue());
+                System.out.println(emblemat+"The result is: ");
+            System.out.print(emblemat);
+            if (lastSign == '-')
+                System.out.print(pairList.get(0).sign);
 
-            System.out.println();
+            System.out.println(pairList.get(0).getValue());
+            System.out.println(emblemat);
         }
-    }
-
-    private static String getOperationRebuilt(List<Pair> pairList){
-        String operation = "";
-        for (Pair p : pairList){
-            operation = operation + p.getSign()+" "+p.getValue()+" ";
-        }
-        return operation;
     }
 
     private static String prepareOperationString(String operationStr) {
-        operationStr = removeUnsuspectedChars(operationStr);
+        operationStr = operationStr.replaceAll(",", ".");
+        operationStr = operationStr.replaceAll("\\s", "");
 
         if (operationStr.length() > 0) {
             char firstChar = operationStr.charAt(0);
@@ -64,34 +88,12 @@ public class NgnA {
         return operationStr;
     }
 
-    private static String removeUnsuspectedChars(String str) {
-        StringBuilder stringBuilder = new StringBuilder(str);
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (!(c >= 48 && c <= 57)) {
-                //power sign
-//                if (c != '+' && c != '-' && c != '*' && c != '/' && c != '^')
-                if (c != '+' && c != '-' && c != '*' && c != '/' && c!='.') {
-                    stringBuilder.setCharAt(i, '_');
-                    System.out.println("Warning: encountered unsuspected character");
-                }
-            }
-        }
-        str = stringBuilder.toString().replaceAll("_", "");
-
-        return str;
-    }
-
     private static List<Pair> organizeOperationString(String operationStr) {
         List<Pair> pairList = new ArrayList<>();
+        pairList.add(new Pair('+',0));
         while (operationStr.length() > 0) {
             char sign = operationStr.charAt(0);
             operationStr = operationStr.substring(1);
-            while (!isNumeric(Character.toString(operationStr.charAt(0)))) {
-                operationStr = operationStr.substring(1);
-                System.out.println("Warning: used autocorrection.");
-            }
-
             String strValue = "";
             char c;
             do {
@@ -101,7 +103,7 @@ public class NgnA {
                 if (operationStr.length() == 0)
                     break;
                 c = operationStr.charAt(0);
-            } while (c >= 48 && c <= 57 || c=='.');
+            } while (c >= 48 && c <= 57 || c == '.');
             double doubleValue = Double.parseDouble(strValue);
             pairList.add(new Pair(sign, doubleValue));
         }
@@ -139,6 +141,37 @@ public class NgnA {
         }
     }
 
+    private static boolean checkCorrectnessOfLine(String str) {
+        if (str.length() > 0) {
+            char c = str.charAt(0);
+            if (!isNumeric(Character.toString(c)) &&
+                    c != '.' &&
+                    c != '+' &&
+                    c != '-')
+                return false;
+        } else return false;
+
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (!(c >= 48 && c <= 57)) { // if is not a digit
+                boolean isSpecial = false;
+                for (char sc : specialChars) {
+                    if (c == sc) {
+                        if (str.length() <= i + 1)
+                            return false;
+                        else if (!isNumeric(Character.toString(str.charAt(i + 1))))
+                            return false;
+                        isSpecial = true;
+                        break;
+                    }
+                }
+                if (isSpecial == false)
+                    return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean isNumeric(String str) {
         if (str == null)
             return false;
@@ -150,7 +183,35 @@ public class NgnA {
         return true;
     }
 
-    private static void paint(List<Pair> pairList) {
+    private static String removeUnsuspectedChars(String str) {
+        str = str.replaceAll(",", ".");
+        str = str.replaceAll("\\s", "");
+        StringBuilder stringBuilder = new StringBuilder(str);
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (!(c >= 48 && c <= 57)) {
+                //power sign
+//                if (c != '+' && c != '-' && c != '*' && c != '/' && c != '^')
+                if (c != '+' && c != '-' && c != '*' && c != '/' && c!='.') {
+                    stringBuilder.setCharAt(i, '_');
+                    System.out.println("Warning: encountered unsuspected character");
+                }
+            }
+        }
+        str = stringBuilder.toString().replaceAll("_", "");
+
+        return str;
+    }
+
+    private static String getOperationStringRebuilt(List<Pair> pairList) {
+        String operation = "";
+        for (Pair p : pairList) {
+            operation = operation + p.getSign() + " " + p.getValue() + " ";
+        }
+        return operation;
+    }
+
+    public static void printPairs(List<Pair> pairList) {
         for (Pair p : pairList) {
             System.out.print(p.getSign());
             System.out.println(p.getValue());
