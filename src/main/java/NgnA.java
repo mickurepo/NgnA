@@ -24,6 +24,7 @@ public class NgnA {
 
     private static char[] specialChars = new char[]{'+', '-', '/', '*', '.'};
     private static String emblemat = "--- | ";
+    private static String soutLine = "----------------------------------------------";
 
     public static void main(String[] args) {
         System.out.println(emblemat+"Welcome.");
@@ -31,10 +32,10 @@ public class NgnA {
         System.out.println(emblemat+"Made by Michal Kurzyk.");
         System.out.println(emblemat+"2021");
         System.out.println(emblemat+"");
-        System.out.println(emblemat+"Decimal separator is used as '.' sign or ',' ");
-        System.out.println(emblemat+"You can add, subtract, multiply and divide");
-        System.out.println(emblemat+"Brackets are not allowd");
-        System.out.println(emblemat);
+        System.out.println(emblemat+"Decimal separator is used as '.' and ',' sign.");
+        System.out.println(emblemat+"You can to add, subtract, multiply and divide");
+        System.out.println(emblemat+"Brackets are not supported");
+        System.out.println(emblemat+soutLine);
 
         Scanner scan = new Scanner(System.in);
         while (true) {
@@ -52,6 +53,7 @@ public class NgnA {
             operationStr = prepareOperationString(operationStr);
             if (checkCorrectnessOfLine(operationStr) == false) {
                 System.out.println(emblemat+"Incorrect input");
+                System.out.println(emblemat+soutLine);
                 continue;
             }
 
@@ -71,7 +73,7 @@ public class NgnA {
                 System.out.print(pairList.get(0).sign);
 
             System.out.println(pairList.get(0).getValue());
-            System.out.println(emblemat);
+            System.out.println(emblemat+soutLine);
         }
     }
 
