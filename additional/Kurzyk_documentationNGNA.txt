@@ -1,0 +1,35 @@
+// The Pair class. Has handle to [char sign] [and value]
+// eg. Pair: { [+][12] }, { [^],[5] }, { [/],[2] }, { [r],[3] } (r-root, 125r3=5)
+public static class Pair { ... }
+
+// Cleaning white spaces from the string, replacing decimal separator: ',' with '.'
+// If the string starts with pisitive number, "+" char is added to the beginning
+// 2+2 -> +2+2
+private static String prepareOperationString(String operationStr) { ... }
+
+// Building pairList<Pair> from the string.
+// The String must provide correctionness (checkCorrectnessOfLine(String str) function)
+private static List<Pair> organizeOperationString(String operationStr) { ... }
+
+// Doing full operation with the right sequence of operation
+private static void doFullOperation(List<Pair> pairList) { ... }
+
+// Doing selected operation in all of pairList, can be decides,
+// which kind of operation will be used: [^],[+],[-],[*],[/],[r] (root) (25r2=5)
+// 5*5+2/444^5 with '*' will give 25+2/444^5
+// To do full operation use doFullOperation(List<Pair>) function
+private static void operationSeries(List<Pair> pairList, char typeOfOperation) { ... }
+
+// Checking the first character, unsuspected characters,
+// doubled special characters (eg. 2**3), special characters on the end (eg. 2+3-).
+// Returning ture if correct, false if incorrect
+private static boolean checkCorrectnessOfLine(String str) { ... }
+
+// Checking if the string can be parsed to double
+public static boolean isNumeric(String str) { ... }
+
+// Developer's helper
+public static void printPairs(List<Pair> pairList) { ... }
+
+// Getting clean operationStr String built based on pairList
+private static String getOperationStringRebuilt(List<Pair> pairList) { ... }
