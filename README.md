@@ -1,5 +1,5 @@
 # Autorstwo i przeznaczenie:
-Program został wykonany na potrzeby rekrutacji do firmy NGN IT Solutions GmbH w 2021r.
+Program został wykonany na potrzeby rekrutacji do firmy NGN IT Solutions GmbH w 2022r.
 Autor: Michał Kurzyk
 
 # Wymagane narzędzia:

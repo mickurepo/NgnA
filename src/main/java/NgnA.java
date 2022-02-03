@@ -4,8 +4,8 @@ import java.util.Scanner;
 
 public class NgnA {
 
-    // The Pair class. Has handle to [char sign] and [double value]
-    // eg. Pairs: { [+],[12] }, { [^],[5] }, { [/],[2] }, { [r],[3] } (r-root, 125r3=5)
+    // The Pair class. Has handle to [char sign] [and value]
+    // eg. Pair: { [+][12] }, { [^],[5] }, { [/],[2] }, { [r],[3] } (r-root, 125r3=5)
     public static class Pair {
         private char sign;
         private double value;
@@ -24,7 +24,7 @@ public class NgnA {
         }
     }
 
-    private static char[] specialChars = new char[]{'+', '-', '/', '*', '.', ',', '^', 'r'};
+    private static char[] specialChars = new char[]{'+', '-', '/', '*', '.', '^', 'r'};
     private static String emblemat = "--- | ";
     private static String soutLine = "----------------------------------------------";
 
@@ -32,7 +32,7 @@ public class NgnA {
         System.out.println(emblemat + "Welcome.");
         System.out.println(emblemat + "Program dedicated to NGN IT Solutions GmbH.");
         System.out.println(emblemat + "Made by Michal Kurzyk.");
-        System.out.println(emblemat + "2021");
+        System.out.println(emblemat + "2022");
         System.out.println(emblemat + "");
         System.out.println(emblemat + "Decimal separator is used as '.' and ',' sign.");
         System.out.println(emblemat + "You can to add, subtract, multiply and divide");
@@ -48,7 +48,7 @@ public class NgnA {
 
             if (operationStr.equals("e")) {
                 System.out.println(emblemat + "Michal Kurzyk.");
-                System.out.println(emblemat + "2021");
+                System.out.println(emblemat + "2022");
                 System.out.println(emblemat + "Closing program. See you.");
                 System.exit(0);
             }
@@ -76,7 +76,7 @@ public class NgnA {
     }
 
     // Cleaning white spaces from the string, replacing decimal separator: ',' with '.'
-    // If the string starts with positive number, "+" char is added at the beginning
+    // If the string starts with pisitive number, "+" char is added to the beginning
     // 2+2 -> +2+2
     private static String prepareOperationString(String operationStr) {
         operationStr = operationStr.replaceAll(",", ".");
@@ -91,42 +91,8 @@ public class NgnA {
         return operationStr;
     }
 
-    // Checking (looking for) the first character, unsuspected characters,
-    // doubled special characters (eg. 2**3), special character on the end (eg. 2+3-).
-    // Returning ture if correct, false if incorrect
-    private static boolean checkCorrectnessOfLine(String str) {
-        if (str.length() > 0) {
-            char c = str.charAt(0);
-            if (!isNumeric(Character.toString(c)) &&
-                    c != '.' &&
-                    c != '+' &&
-                    c != '-')
-                return false;
-        } else return false;
-
-        for (int i = 0; i < str.length(); i++) {
-            char c = str.charAt(i);
-            if (!(c >= 48 && c <= 57)) { // if is not a digit
-                boolean isSpecial = false;
-                for (char sc : specialChars) {
-                    if (c == sc) {
-                        if (str.length() <= i + 1)
-                            return false;
-                        else if (!isNumeric(Character.toString(str.charAt(i + 1))))
-                            return false;
-                        isSpecial = true;
-                        break;
-                    }
-                }
-                if (isSpecial == false)
-                    return false;
-            }
-        }
-        return true;
-    }
-
     // Building pairList<Pair> from the string.
-    // Must provided correct string (to check correctionness use checkCorrectnessOfLine(String str) function)
+    // The String must provide correctionness (checkCorrectnessOfLine(String str) function)
     private static List<Pair> organizeOperationString(String operationStr) {
         List<Pair> pairList = new ArrayList<>();
         pairList.add(new Pair('+', 0));
@@ -149,9 +115,19 @@ public class NgnA {
         return pairList;
     }
 
-    // Doing selected operation in all Pairs of pairList.
-    // Choose, which kind of operation will be done here: [^],[+],[-],[*],[/],[r] (root) (125r3=5)
-    // +5*6+2/444^5 with '*' will give +30+2/444^5 and one pair removed (*6), +30 jupm to place of 'old' +5
+    // Doing full operation with the right sequence of operation
+    private static void doFullOperation(List<Pair> pairList){
+        operationSeries(pairList, 'r');
+        operationSeries(pairList, '^');
+        operationSeries(pairList, '/');
+        operationSeries(pairList, '*');
+        operationSeries(pairList, '-');
+        operationSeries(pairList, '+');
+    }
+
+    // Doing selected operation in all of pairList, can be decides,
+    // which kind of operation will be used: [^],[+],[-],[*],[/],[r] (root) (25r2=5)
+    // 5*5+2/444^5 with '*' will give 25+2/444^5
     // To do full operation use doFullOperation(List<Pair>) function
     private static void operationSeries(List<Pair> pairList, char typeOfOperation) {
         for (int i = 0; i < pairList.size(); i++) {
@@ -188,14 +164,38 @@ public class NgnA {
         }
     }
 
-    // Doing full operation with the right operation's sequence
-    private static void doFullOperation(List<Pair> pairList) {
-        operationSeries(pairList, 'r');
-        operationSeries(pairList, '^');
-        operationSeries(pairList, '/');
-        operationSeries(pairList, '*');
-        operationSeries(pairList, '-');
-        operationSeries(pairList, '+');
+    // Checking the first character, unsuspected characters,
+    // doubled special characters (eg. 2**3), special characters on the end (eg. 2+3-).
+    // Returning ture if correct, false if incorrect
+    private static boolean checkCorrectnessOfLine(String str) {
+        if (str.length() > 0) {
+            char c = str.charAt(0);
+            if (!isNumeric(Character.toString(c)) &&
+                    c != '.' &&
+                    c != '+' &&
+                    c != '-')
+                return false;
+        } else return false;
+
+        for (int i = 0; i < str.length(); i++) {
+            char c = str.charAt(i);
+            if (!(c >= 48 && c <= 57)) { // if is not a digit
+                boolean isSpecial = false;
+                for (char sc : specialChars) {
+                    if (c == sc) {
+                        if (str.length() <= i + 1)
+                            return false;
+                        else if (!isNumeric(Character.toString(str.charAt(i + 1))))
+                            return false;
+                        isSpecial = true;
+                        break;
+                    }
+                }
+                if (isSpecial == false)
+                    return false;
+            }
+        }
+        return true;
     }
 
     // Checking if the string can be parsed to double
@@ -218,7 +218,7 @@ public class NgnA {
         }
     }
 
-    // Getting clean operationStr string built based on what is in List<Pair> pairList
+    // Getting clean operationStr String built based on pairList
     private static String getOperationStringRebuilt(List<Pair> pairList) {
         String operation = "";
         for (Pair p : pairList) {
